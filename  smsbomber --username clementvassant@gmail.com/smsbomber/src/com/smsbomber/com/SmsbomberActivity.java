@@ -30,7 +30,7 @@ import com.google.ads.AdView;
 public class SmsbomberActivity extends Activity implements OnClickListener {
     /** Called when the activity is first created. */
 	private EditText text;
-	private  EditText nbSms;
+	private EditText nbSms;
 	private Button envoyer;
 	private AdView Pub;
 	private String idAdMob;
