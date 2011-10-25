@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Contacts;
 import android.provider.Contacts.People;
-import android.telephony.SmsManager;
+import android.telephony.gsm.SmsManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.ads.AdRequest;
@@ -29,7 +30,6 @@ import com.google.ads.AdView;
 public class SmsbomberActivity extends Activity implements OnClickListener {
     /** Called when the activity is first created. */
 	private EditText text;
-	
 	private  EditText nbSms;
 	private Button envoyer;
 	private AdView Pub;
@@ -39,8 +39,7 @@ public class SmsbomberActivity extends Activity implements OnClickListener {
 	private EditText cDestinataire ;
 	private String destinataire;
 	private String numero;
-	private ProgressBar progression;
-	private Handler mHandler = new Handler();
+	
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,8 +51,8 @@ public class SmsbomberActivity extends Activity implements OnClickListener {
          nbSms = (EditText)findViewById(R.id.edNbSms);
          nbSms.setText("1");
          cDestinataire = (EditText) findViewById(R.id.autoContact);
-         progression = (ProgressBar)findViewById(R.id.progressBar); 
          envoyer.setOnClickListener(this);
+        
          
          /** Partie concernant la publicité**/
          idAdMob = "a14ea562e277ca7";
@@ -75,9 +74,6 @@ public class SmsbomberActivity extends Activity implements OnClickListener {
          
        //On affecte cette liste d'autocompletion à notre objet d'autocompletion
  		autoComplete.setAdapter(adapter);
-
- 		/**Partie concernant la ProgressBar**/
- 		progression.setVisibility(View.INVISIBLE);
     }
 
     
@@ -86,20 +82,24 @@ public class SmsbomberActivity extends Activity implements OnClickListener {
     	// notre tableau de contact
     	Mescontacts = new ArrayList<String>();
     	
-        // instance qui permet d'acceder au contenu d'autre application
+        // instance qui permet de récupérer les contacts du téléphone avec une URI
     	ContentResolver ConnectApp = this.getContentResolver();
     	Uri uri = Contacts.People.CONTENT_URI;
+    	
+    	//structure que l'on souhaite avoir pour le stockage des contacts
          String[] projection = new String[] {People.NAME, People.NUMBER, People._ID };
          
         // on récupere les contacts dans un curseur
          Cursor cur = ConnectApp.query(uri, projection, null, null, null);
          this.startManagingCursor(cur);
  
+         //on parcour le curseur pour stocker les contacts dans l'arraylist
          if (cur.moveToFirst()) {
              do {
                  String name = cur.getString(cur.getColumnIndex(People.NAME));
                  String num = cur.getString(cur.getColumnIndex(People.NUMBER));
                  String id = cur.getString(cur.getColumnIndex(Contacts.People._ID));
+                 //on rajoute à l'arraylist le contact
                  Mescontacts.add(name+"<"+num+">");
              } while (cur.moveToNext());
          }
@@ -135,7 +135,11 @@ public class SmsbomberActivity extends Activity implements OnClickListener {
 					{
 					numero =  destinataire.substring(debut+1,fin);
 					}
-					if(numero == "null") return;
+					if(numero.contains("null"))
+						{
+						Toast.makeText(this, "Erreur dans le numéro saisie", Toast.LENGTH_SHORT).show();
+						return;
+						}
 				}
 				else try
 						{
@@ -150,23 +154,21 @@ public class SmsbomberActivity extends Activity implements OnClickListener {
 				
 				String msg = text.getText().toString();
 		
-				//on met la limite de la barre de progression au nb de sms a envoyer
-				//progression.setMax(100);
-				progression.setVisibility(View.VISIBLE);
+				
 				
 				for(int i = 1; i <= Integer.valueOf(nbSms.getText().toString()); i++)
 				{
-					//SmsManager.getDefault().sendTextMessage(numero, null, msg, null, null);
-					progression.setProgress((i*100)/(Integer.valueOf(nbSms.getText().toString())));
-					Toast.makeText(this, i+"/"+nbSms.getText(), Toast.LENGTH_SHORT).show();
+					SmsManager.getDefault().sendTextMessage(numero, null, msg, null, null);
+					
 				}
 				
-				
-				//Toast.makeText(this, "message envoyé", Toast.LENGTH_SHORT).show();
-				//SmsManager.getDefault().sendTextMessage(contact.getText().toString(), null, text.getText().toString(), null, null);
+				Toast.makeText(this, "Messages envoyés",Toast.LENGTH_SHORT).show();
+	                
+			/**Réinitialisation des editTexts **/	
 			text.setText("");
 			cDestinataire.setText("");
 			nbSms.setText("1");
+			
 			}	
 			
 		}
