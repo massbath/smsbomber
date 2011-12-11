@@ -7,7 +7,6 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Contacts;
 import android.provider.Contacts.People;
 import android.telephony.gsm.SmsManager;
@@ -18,13 +17,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.ads.AdRequest;
-import com.google.ads.AdSize;
-import com.google.ads.AdView;
 
 @SuppressWarnings("deprecation")
 public class SmsbomberActivity extends Activity implements OnClickListener {
@@ -32,7 +25,7 @@ public class SmsbomberActivity extends Activity implements OnClickListener {
 	private EditText text;
 	private EditText nbSms;
 	private Button envoyer;
-	private AdView Pub;
+	//private AdView Pub;
 	private String idAdMob;
 	private ArrayList<String> Mescontacts;
 	private AutoCompleteTextView autoComplete ;
@@ -63,7 +56,7 @@ public class SmsbomberActivity extends Activity implements OnClickListener {
          layout.addView(Pub);
 
          // Initiate a generic request to load it with an ad
-         Pub.loadAd(new AdRequest());
+        // Pub.loadAd(new AdRequest());
         
          /** Partie concernant l'autocomplétion**/
 
@@ -108,7 +101,7 @@ public class SmsbomberActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
-		Pub.destroy();
+		//Pub.destroy();
 	    super.onDestroy();
 		
 	}
