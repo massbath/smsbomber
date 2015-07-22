@@ -1,0 +1,1 @@
+To send many sms to a contact, just for the fun
